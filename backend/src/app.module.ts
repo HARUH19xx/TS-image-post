@@ -17,7 +17,7 @@ export const AppModule: () => express.Express = () => {
   // });
 
   const corsOptions = {
-    origin: 'http://localhost:5500/*',
+    origin: 'http://localhost:5500',
     methods: 'GET,PUT,POST,DELETE',
     allowedHeaders: 'Content-Type,Authorization',
   };
