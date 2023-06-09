@@ -1,20 +1,33 @@
-//app.moduleはアプリケーションの機能を整理し、依存関係を管理する。
-//つまり、モジュールを使ってアプリケーションの構造を提示する。
-import { appController, ArsController } from './app.controller';
-import { ArsService, appService } from './app.service';
+import {
+  helloWorldController,
+  loginController,
+  registerController,
+} from './app.controller';
+import {
+  helloWorld,
+  loginService,
+  registerService,
+} from './app.service';
 import * as express from 'express';
 import * as cors from 'cors';
+import mysql from 'mysql2/promise';
+
+// MySQLデータベースへの接続
+export const pool = mysql.createPool({
+  host: 'localhost',
+  user: 'root',
+  password: 'password',
+  database: 'test',
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
+});
 
 export const AppModule: () => express.Express = () => {
   const app = express();
 
-  // CORS設定
-  // app.use((req, res, next) => {
-  //   res.header('Access-Control-Allow-Origin', 'http://127.0.0.1:5500');
-  //   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-  //   res.header('Access-Control-Allow-Headers', 'Content-Type,Authorization');
-  //   next();
-  // });
+  // JSONボディパーサーの有効化
+  app.use(express.json());
 
   const corsOptions = {
     origin: 'http://localhost:5500',
@@ -23,11 +36,17 @@ export const AppModule: () => express.Express = () => {
   };
   app.use(cors(corsOptions));
 
-  // appControllerを使用する
-  app.get('/', appController(appService));
-  app.get('/ars', ArsController(ArsService));
+  // コントローラーを使用する
+  app.get('/', helloWorldController(helloWorld));
+  app.post('/login', loginController(loginService));
+  app.post('/register', registerController(registerService));
 
-  // その他のミドルウェアや設定をここに追加する
+  //　ユーザーインターフェース
+  interface User {
+    id: string;
+    username: string;
+    password: string;
+  }
 
   app.listen(3000, () => {
     console.log('Server listening on port 3000');
@@ -35,3 +54,13 @@ export const AppModule: () => express.Express = () => {
 
   return app as express.Express;
 };
+
+
+
+//　参考：手動のCORS設定
+// app.use((req, res, next) => {
+//   res.header('Access-Control-Allow-Origin', 'http://127.0.0.1:5500');
+//   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+//   res.header('Access-Control-Allow-Headers', 'Content-Type,Authorization');
+//   next();
+// });

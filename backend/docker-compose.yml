@@ -1,0 +1,21 @@
+version: '3.9'
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mysql
+  mysql:
+    image: mysql:8.0.32
+    container_name: mysql-posts
+    env_file:
+      - ./.env
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-posts-data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+volumes:
+  mysql-posts-data:

@@ -11,12 +11,10 @@ const app = express();
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // 静的ファイルをホストする
-app.use('/src', express.static(path.join(__dirname, 'src')));
+app.use(express.static(path.join(__dirname)));
 
-// HTMLファイルを返す
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
-});
+//　別のドメインが必要になったときに使う
+// app.use('/src', express.static(path.join(__dirname, 'src')));
 
 app.listen(5500, () => {
   console.log('Server is running on port 5500');
